@@ -5,33 +5,14 @@ class NegociacaoController {
         this._inputValor = $('#valor');
         this._inputData = $('#data');
         
-        // this._listaNegociacoes = new ListaNegociacoes(model => this._negociacoesView.update(model)); 
+        // Cria um proxy (bind) entre o model e a view através de uma classe auxiliadora 
+        this._listaNegociacoes = new Bind( new ListaNegociacoes(),                      // model
+                                           new NegociacoesView($('#negociacaoView')),   // view
+                                           'adciona','esvazia');                        // props
 
-        let self = this;    // guarda referência do NegiciacaoController
-        this._listaNegociacoes = new Proxy(new ListaNegociacoes(), {
-            get(target, prop, receiver) {
-                // Se no object target existe a prop do array e ela for do tipo "function"
-                if (['adciona' , 'esvazia'].includes(prop) && typeof(target[prop])  == typeof(Function)) { 
-                   console.log(`Interceptando método ${prop}`);
-                   return function (){    //não pode ser arrow Function, precisa do contexto dinâmico
-                       // Executa os códigos extras se a função foi interceptada
-                       
-                       //Executa a função prop que foi interceptada 
-                       Reflect.apply(target[prop], target, arguments); // executa a função original com os parâmetros (arguments)
-                       self._negociacoesView.update(target); //atualiza a view (target é o model)
-                    }
-                } 
-                 
-                return Reflect.get(target, prop, receiver); // executa o que não atendeu ao IF 
-            }
-        }); 
-
-        this._negociacoesView = new NegociacoesView($('#negociacaoView'));
-        this._negociacoesView.update(this._listaNegociacoes);
-
-        this._mensagem = new Mensagem();
-        this._mensagemView = new MensagemView( $('#mensagemView'));
-        this._mensagemView.update(this._mensagem);
+        this._mensagem = new Bind(new Mensagem(),
+                                  new MensagemView( $('#mensagemView')), 
+                                 'texto');
     }
     
     adciona(event) {
@@ -40,7 +21,6 @@ class NegociacaoController {
         this._listaNegociacoes.adciona(this._criaNegociacao());
 
         this._mensagem.texto = 'Negociação incluída com sucesso.'
-        this._mensagemView.update(this._mensagem);
         
         this._limpaformulario();   
     }
@@ -48,7 +28,6 @@ class NegociacaoController {
     apaga() {
         this._listaNegociacoes.esvazia();
         this._mensagem.texto = 'Negociações apagadas com sucesso.'
-        this._mensagemView.update(this._mensagem);
     }
 
     _criaNegociacao () {
