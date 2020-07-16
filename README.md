@@ -1,2 +1,2 @@
-# curso-javascript-alura-padroes
-Curso Alura - JavaScript Conhecendo Browser e Padrões de Projeto
+# curso-javascript-alura-mcv-proxy-factory
+Curso Alura - JavaScript: Aprofundando em MVC, padrão Proxy e Factory
