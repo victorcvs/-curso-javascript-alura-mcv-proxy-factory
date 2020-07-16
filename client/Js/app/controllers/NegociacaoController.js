@@ -30,6 +30,21 @@ class NegociacaoController {
         this._mensagem.texto = 'Negociações apagadas com sucesso.'
     }
 
+    importaNegociacoes() {
+
+        let service = new NegociacoesService();
+
+        service.obterNegociacoesDaSemana((erro, negociacoes) => {
+            if (erro) {
+                this._mensagem.texto = erro;
+                return;
+            };
+
+            negociacoes.forEach(negociacao => this._listaNegociacoes.adciona(negociacao));   // para cada negociação, inclui na lista
+            this._mensagem.texto = 'Negociações importadas com sucesso';
+        });
+    }
+
     _criaNegociacao () {
         return new Negociacao (
             DateHelper.textoParaData(this._inputData.value),   
